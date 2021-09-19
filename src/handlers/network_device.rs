@@ -1,5 +1,14 @@
-use actix_web::{Error, HttpResponse};
+use actix_web::{HttpResponse};
 
-pub async fn get_devices() -> Result<HttpResponse, Error> {
-    Ok(HttpResponse::Ok().finish())
+use std::process::Command;
+
+pub async fn get_devices() -> HttpResponse {
+
+    let json = Command::new("/usr/sbin/ip").arg("-j").arg("link")
+        .output()
+        .expect("Something");
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(json.stdout)
 }
